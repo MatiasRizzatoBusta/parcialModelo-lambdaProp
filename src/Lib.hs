@@ -66,7 +66,7 @@ cumpleRequisito depto requisito  = requisito depto
 
 buscar :: Busqueda->(Depto->Depto->Bool)->[Depto]->[Depto]
 buscar requisitosBusqueda ordenamiento = ordenarSegun ordenamiento.filter (flip cumpleBusqueda requisitosBusqueda)
---flip hace que a cumple busqueda le lleguen los datos como Busqueda->Depto
+--flip hace que a cumpleBusqueda le lleguen los datos invertidos(como Busqueda->Depto)
 -- a la lista filtrada la ordeno por el ordenamiento que quiero
 
 ejemplo :: Busqueda
