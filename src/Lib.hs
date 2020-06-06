@@ -35,8 +35,8 @@ deptosDeEjemplo = [
   
 ------------------------------------------- Punto 1 -------------------------------------------
 mayor :: (Eq a , Ord b)=> (a->b)->a->a->Bool
-mayor funcion valor otroValor = funcion valor > funcion otroValor
-
+mayor funcion valor  =  (< funcion valor).funcion  --se fija que el segundo sea menor que el primero. Al reves(< func valor) 
+                                                   -- se fija que el seg sea mayor que el primero (menor a mayor)
 menor :: (Eq a , Ord b)=>(a->b)->a->a->Bool
 menor funcion valor  = not.mayor funcion valor
 
@@ -49,3 +49,12 @@ para que sepa que son elementos con un orden y pueda comparalos.
 ej: ordenarSegun (mayor length) ["gol","hola","martes","sopa do macaco"] devuelve ["sopa do macaco","martes","hola","gol"]
 -}
 ------------------------------------------- Punto 2 -------------------------------------------
+ubicadoEn :: [String]->Bool
+ubicadoEn listaBarrios = any (algunoCumple listaBarrios) deptosDeEjemplo 
+--este any esta para iterar la lista de depros y ver al primero q cumple
+
+algunoCumple :: [String]->Depto->Bool
+algunoCumple listaBarrios depto = any (==(barrio depto)) listaBarrios--aca itero la lista de barrios y veo si uno cumple
+
+cumpleRango :: Ord a =>(Depto->a)->a->a->Depto->Bool
+cumpleRango funcion valorMaximo valorMinimo  = (between valorMaximo valorMinimo).funcion
