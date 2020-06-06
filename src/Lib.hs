@@ -3,9 +3,6 @@ import Text.Show.Functions
 laVerdad = True
 type Barrio = String
 type Mail = String
-type Requisito = Depto -> Bool
-type Busqueda = [Requisito]
-
 data Depto = Depto { 
   ambientes :: Int,
   superficie :: Int,
@@ -49,12 +46,27 @@ para que sepa que son elementos con un orden y pueda comparalos.
 ej: ordenarSegun (mayor length) ["gol","hola","martes","sopa do macaco"] devuelve ["sopa do macaco","martes","hola","gol"]
 -}
 ------------------------------------------- Punto 2 -------------------------------------------
-ubicadoEn :: [String]->Bool
-ubicadoEn listaBarrios = any (algunoCumple listaBarrios) deptosDeEjemplo 
+type Requisito = Depto -> Bool
+type Busqueda = [Requisito]
+ubicadoEn :: [Barrio]->Requisito
+ubicadoEn listaBarrios depto = any (== barrio depto) listaBarrios
 --este any esta para iterar la lista de depros y ver al primero q cumple
 
-algunoCumple :: [String]->Depto->Bool
-algunoCumple listaBarrios depto = any (==(barrio depto)) listaBarrios--aca itero la lista de barrios y veo si uno cumple
+algunoCumple :: [String]->Requisito
+algunoCumple listaBarrios depto = any (==(barrio depto)) listaBarrios
 
-cumpleRango :: Ord a =>(Depto->a)->a->a->Depto->Bool
+cumpleRango :: Ord a =>(Depto->a)->a->a->Requisito
 cumpleRango funcion valorMaximo valorMinimo  = (between valorMaximo valorMinimo).funcion
+------------------------------------------- Punto 3 ------------------------------------------- 
+cumpleBusqueda :: Busqueda->Depto->Bool 
+cumpleBusqueda busqueda depto = all (cumpleRequisito depto) busqueda
+
+cumpleRequisito :: Depto->Requisito->Bool
+cumpleRequisito depto requisito  = requisito depto
+
+buscar :: Busqueda->(Depto->Depto->Bool)->[Depto]->[Depto]
+buscar requisitosBusqueda ordenamiento = ordenarSegun ordenamiento.filter (cumpleBusqueda requisitosBusqueda)
+-- a la lista filtrada la ordeno por el ordenamiento que quiero
+
+ejemplo :: Busqueda
+ejemplo = [ubicadoEn ["Recoleta", "Palermo"], cumpleRango ambientes 1 2,cumpleRango precio 0 6000]
