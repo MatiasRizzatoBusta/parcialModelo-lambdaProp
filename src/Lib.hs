@@ -13,7 +13,7 @@ data Depto = Depto {
 data Persona = Persona {
     mail :: Mail,
     busquedas :: [Busqueda]
-}
+}deriving(Show)
 
 ordenarSegun _ [] = []
 ordenarSegun criterio (x:xs) =
@@ -58,15 +58,22 @@ algunoCumple listaBarrios depto = any (==(barrio depto)) listaBarrios
 cumpleRango :: Ord a =>(Depto->a)->a->a->Requisito
 cumpleRango funcion valorMaximo valorMinimo  = (between valorMaximo valorMinimo).funcion
 ------------------------------------------- Punto 3 ------------------------------------------- 
-cumpleBusqueda :: Busqueda->Depto->Bool 
-cumpleBusqueda busqueda depto = all (cumpleRequisito depto) busqueda
+cumpleBusqueda :: Depto->Busqueda->Bool 
+cumpleBusqueda depto busqueda  = all (cumpleRequisito depto) busqueda
 
 cumpleRequisito :: Depto->Requisito->Bool
 cumpleRequisito depto requisito  = requisito depto
 
 buscar :: Busqueda->(Depto->Depto->Bool)->[Depto]->[Depto]
-buscar requisitosBusqueda ordenamiento = ordenarSegun ordenamiento.filter (cumpleBusqueda requisitosBusqueda)
+buscar requisitosBusqueda ordenamiento = ordenarSegun ordenamiento.filter (flip cumpleBusqueda requisitosBusqueda)
+--flip hace que a cumple busqueda le lleguen los datos como Busqueda->Depto
 -- a la lista filtrada la ordeno por el ordenamiento que quiero
 
 ejemplo :: Busqueda
 ejemplo = [ubicadoEn ["Recoleta", "Palermo"], cumpleRango ambientes 1 2,cumpleRango precio 0 6000]
+------------------------------------------- Punto 4 -------------------------------------------
+mailsDePersonasInteresadas :: Depto->[Persona]->[Mail]
+mailsDePersonasInteresadas depto = map mail.filter (estaInteresada depto)
+
+estaInteresada :: Depto->Persona->Bool
+estaInteresada depto  = any (cumpleBusqueda  depto).busquedas
